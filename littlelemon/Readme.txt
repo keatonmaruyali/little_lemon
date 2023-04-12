@@ -1,0 +1,2 @@
+/registration/users/
+/reservations/book/

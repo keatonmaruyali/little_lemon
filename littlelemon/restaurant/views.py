@@ -5,7 +5,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.models import User
-# from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
 
@@ -14,6 +14,7 @@ from .models import Menu, Booking
 from .serializers import MenuSerializer, BookingSerializer, UserSerializer
 
 
+@csrf_exempt
 def home(request):
     return render(request, 'index.html')
 
@@ -44,11 +45,11 @@ class BookingViewSet(viewsets.ModelViewSet):
         serializer = BookingSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    # def create(self, request):
-    #     serializer = BookingSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return HttpResponse(status=201)
+    def perform_create(self, request):
+        serializer = BookingSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse(status=201)
 
     def retrieve(self, request, pk=None):
         booking = Booking.objects.all()
